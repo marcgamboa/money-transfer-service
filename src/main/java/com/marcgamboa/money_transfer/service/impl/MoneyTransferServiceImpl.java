@@ -10,7 +10,9 @@ import org.springframework.transaction.annotation.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.time.LocalDateTime;
+import java.util.Set;
 
 @Service
 @RequiredArgsConstructor
@@ -51,21 +53,26 @@ public class MoneyTransferServiceImpl implements MoneyTransferService {
         transaction.setSourceCurrency(sourceAccountCurrency);
         transaction.setTargetCurrency(targetAccountCurrency);
         transaction.setExchangeRate(
-            currencyConversionService.getExchangeRate(sourceAccountCurrency, targetAccountCurrency));
+            currencyConversionService.getExchangeRate(sourceAccountCurrency, targetAccountCurrency, sourceCurrency));
         transaction.setFee(fee);
         transaction.setTimestamp(LocalDateTime.now());
         transaction.setStatus(TransactionStatus.PENDING);
 
+        // Convert amount
+        BigDecimal convertedAmount = currencyConversionService.convert(
+                amount, sourceAccountCurrency, targetAccountCurrency, sourceCurrency);
+
         // Check sufficient funds
-        if (fromAccount.getBalance().compareTo(totalDeduction) < 0) {
+        if(!Set.of(sourceAccountCurrency.name(), targetAccountCurrency.name()).contains(sourceCurrency)) {
+            if(fromAccount.getBalance().compareTo(convertedAmount) < 0)
             transaction.setStatus(TransactionStatus.INSUFFICIENT_FUNDS);
             return transaction;
         }
 
-        // Convert amount if necessary
-        BigDecimal convertedAmount = currencyConversionService.convert(
-                amount, sourceAccountCurrency, targetAccountCurrency);
-
+        if (fromAccount.getBalance().compareTo(totalDeduction) < 0) {
+            transaction.setStatus(TransactionStatus.INSUFFICIENT_FUNDS);
+            return transaction;
+        }
 
         try {
             fromAccount.setBalance(fromAccount.getBalance().subtract(totalDeduction));

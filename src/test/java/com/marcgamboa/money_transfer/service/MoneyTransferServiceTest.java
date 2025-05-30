@@ -17,6 +17,7 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.ActiveProfiles;
 import java.math.BigDecimal;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.concurrent.CompletableFuture;
@@ -133,7 +134,12 @@ public class MoneyTransferServiceTest {
     @Order(3)
     void testConcurrentTransfers() throws InterruptedException {
         //given
-        System.out.println("Scenario 3 - Concurrent Transfers");
+        System.out.println("""
+                Scenario 3 - Concurrent Transfers
+                   - Transfer 20 AUD from Bob to Alice
+                   - Transfer 40 USD from Alice to Bob
+                   - Transfer 40 CNY from Alice to Bob
+                """);
         setupAccounts();
 
         List<Transaction> transactions = new LinkedList<>();
@@ -196,22 +202,16 @@ public class MoneyTransferServiceTest {
     }
 
     private void displayTransactions(Transaction... transactions){
-        System.out.println("===========================================================================TRANSACTION=========================================================================");
-        System.out.printf("%-20s %-20s %-20s %-20s %-20s %-20s %-20s%n", "From Account", "To Account", "Amount", "Source Currency", "Target Currency", "Fee", "Status");
-        System.out.println("---------------------------------------------------------------------------------------------------------------------------------------------------------------");
-        for(Transaction transaction : transactions)
-            System.out.printf("%-20s %-20s %-20s %-20s %-20s %-20s %-20s%n", transaction.getFromAccount().getName(), transaction.getToAccount().getName(), transaction.getAmount(),
-                    transaction.getSourceCurrency(), transaction.getTargetCurrency(), transaction.getFee(), transaction.getStatus());
-        System.out.println("===============================================================================================================================================================\n\n");
+        displayTransactions(Arrays.asList(transactions));
     }
 
     private void displayTransactions(List<Transaction> transactions){
         System.out.println("===========================================================================TRANSACTION=========================================================================");
-        System.out.printf("%-20s %-20s %-20s %-20s %-20s %-20s %-20s%n", "From Account", "To Account", "Amount", "Source Currency", "Target Currency", "Fee", "Status");
+        System.out.printf("%-20s %-20s %-20s %-20s %-20s %-20s %-20s %-20s%n", "From Account", "To Account", "Amount", "Source Currency", "Target Currency", "Exchange Rate", "Fee", "Status");
         System.out.println("---------------------------------------------------------------------------------------------------------------------------------------------------------------");
         for(Transaction transaction : transactions)
-            System.out.printf("%-20s %-20s %-20s %-20s %-20s %-20s %-20s%n", transaction.getFromAccount().getName(), transaction.getToAccount().getName(), transaction.getAmount(),
-                    transaction.getSourceCurrency(), transaction.getTargetCurrency(), transaction.getFee(), transaction.getStatus());
+            System.out.printf("%-20s %-20s %-20s %-20s %-20s %-20s %-20s %-20s%n", transaction.getFromAccount().getName(), transaction.getToAccount().getName(), transaction.getAmount(),
+                    transaction.getSourceCurrency(), transaction.getTargetCurrency(), transaction.getExchangeRate(), transaction.getFee(), transaction.getStatus());
         System.out.println("===============================================================================================================================================================\n\n");
     }
 } 
