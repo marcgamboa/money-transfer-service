@@ -11,6 +11,23 @@ A spring boot application that handles money transfers between accounts with cur
 - Concurrent transaction support
 - H2 in-memory database
 
+## 📝Test Scenarios
+1. Transfer `50 USD` (Alice to Bob)
+2. Transfer `50 AUD` (Bob to Alice) recurring for `20 times`
+3. Concurrently:
+   - Transfer `20 AUD` Bob to Alice
+   - Transfer `40 USD` Alice to Bob
+   - Transfer `40 CNY` Alice to Bob
+
+### 💡 Assumptions
+**FX Rates**
+
+| Currency | Rates  |
+|----------|--------|
+| AUD/USD  | 0.50   |
+| CNY/USD  | 0.0069 |
+| JPY/USD  | 0.14   |
+
 
 ## 🔧 Prerequisites
 ### ✅ Java 17 Installation and Setup
@@ -47,4 +64,3 @@ You should see something like:
 4. On the test report, navigate to this location 
 `all > com.marcgamboa.money_transfer.service > MoneyTransferServiceTest` then select `Standard output` tab to 
 view the results
-
