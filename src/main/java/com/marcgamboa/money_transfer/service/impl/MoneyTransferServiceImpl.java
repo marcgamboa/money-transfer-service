@@ -64,9 +64,10 @@ public class MoneyTransferServiceImpl implements MoneyTransferService {
 
         // Check sufficient funds
         if(!Set.of(sourceAccountCurrency.name(), targetAccountCurrency.name()).contains(sourceCurrency)) {
-            if(fromAccount.getBalance().compareTo(convertedAmount) < 0)
-            transaction.setStatus(TransactionStatus.INSUFFICIENT_FUNDS);
-            return transaction;
+            if(fromAccount.getBalance().compareTo(convertedAmount) < 0) {
+                transaction.setStatus(TransactionStatus.INSUFFICIENT_FUNDS);
+                return transaction;
+            }
         }
 
         if (fromAccount.getBalance().compareTo(totalDeduction) < 0) {

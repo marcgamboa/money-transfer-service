@@ -153,7 +153,8 @@ public class MoneyTransferServiceTest {
         executorService.submit(() -> {
             try {
                 transactions.add(moneyTransferService.transfer(BOB_ID, ALICE_ID,
-                    new BigDecimal("20.00"), "AUD"));
+                        new BigDecimal("20.00"), "AUD"));
+                System.out.println("Transfer 20 AUD from Bob to Alice complete.");
             } finally {
                 latch.countDown();
             }
@@ -163,19 +164,19 @@ public class MoneyTransferServiceTest {
         executorService.submit(() -> {
             try {
                 transactions.add(moneyTransferService.transfer(ALICE_ID, BOB_ID,
-                    new BigDecimal("40.00"), "USD"));
+                        new BigDecimal("40.00"), "USD"));
+                System.out.println("Transfer 40 USD from Alice to Bob complete.");
             } finally {
                 latch.countDown();
             }
         });
 
-        // Transfer 40 CNY from Alice to Bob (should fail due to currency mismatch)
+        // Transfer 40 CNY from Alice to Bob
         executorService.submit(() -> {
             try {
                 transactions.add(moneyTransferService.transfer(ALICE_ID, BOB_ID,
                     new BigDecimal("40.00"), "CNY"));
-            } catch (IllegalArgumentException e) {
-                // Expected exception
+                System.out.println("Transfer 40 CNY from Alice to Bob complete.");
             } finally {
                 latch.countDown();
             }
